@@ -55,10 +55,10 @@ fn impl_random_variant(inp: &DeriveInput) -> TokenStream {
     });
 
     let expanded = quote! {
-      use rand::distr::{Distribution, StandardUniform};
-      use rand::Rng;
-
       impl Distribution<#name> for StandardUniform {
+        use rand::distr::{Distribution, StandardUniform};
+        use rand::Rng;
+
         fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> #name {
           let num = rng.random_range(0..#count);
 
