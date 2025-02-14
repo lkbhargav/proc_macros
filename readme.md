@@ -5,8 +5,7 @@
 2. **Random**: Implements a `random` methods on a enum so we can call it to get a random enum variant. Add the following imports for the Random to work
 
 `
-  use rand::distr::{Distribution, StandardUniform};
-  use rand::Rng;
+  use rand::seq::IndexedRandom;
 `
 
 3. **ValueAssigner**: Implements a `get_value` and `get_type` methods on a enum so we can get a usize value of the variant.

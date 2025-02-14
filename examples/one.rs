@@ -1,8 +1,7 @@
 use proc_macros::{time_it, FieldCounter, Random, ValueAssigner};
-use rand::distr::{Distribution, StandardUniform};
-use rand::Rng;
+use rand::seq::IndexedRandom;
 
-#[derive(Debug, FieldCounter, Random, ValueAssigner)]
+#[derive(Debug, Clone, FieldCounter, Random, ValueAssigner)]
 enum MyEnum {
     A,
     B,
@@ -23,7 +22,7 @@ fn add(n1: usize, n2: usize) -> usize {
 }
 
 fn main() {
-    let random: MyEnum = rand::random();
+    let random: MyEnum = MyEnum::random();
     println!(
         "{:?} {} {} {:?}",
         random,

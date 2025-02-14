@@ -41,28 +41,22 @@ pub fn random_enum_variant(input: TokenStream) -> TokenStream {
 fn impl_random_variant(inp: &DeriveInput) -> TokenStream {
     let name = &inp.ident;
 
-    let (count, variants) = if let syn::Data::Enum(data) = &inp.data {
-        (data.variants.iter().len(), &data.variants)
+    let variants = if let syn::Data::Enum(data) = &inp.data {
+        &data.variants
     } else {
         panic!("RandomVariant procedural macro can only be used on Enum's, please fix it");
     };
 
-    let first_variant = &variants[0].ident;
-
-    let mappings = variants.iter().enumerate().map(|(idx, variant)| {
+    let mappings = variants.iter().map(|variant| {
         let variant_ident = &variant.ident; // Get the variant identifier
-        quote! { #idx => #name::#variant_ident }
+        quote! { #name::#variant_ident }
     });
 
     let expanded = quote! {
-      impl Distribution<#name> for StandardUniform {
-        fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> #name {
-          let num = rng.random_range(0..#count);
-
-          match num {
-              #(#mappings),*,
-              _ => #name::#first_variant
-          }
+      impl #name {
+        fn random() -> #name {
+          let mut rng = rand::thread_rng();
+          [#(#mappings),*,].choose(&mut rng).unwrap().clone()
         }
       }
     };
