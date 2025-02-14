@@ -47,8 +47,6 @@ fn impl_random_variant(inp: &DeriveInput) -> TokenStream {
         panic!("RandomVariant procedural macro can only be used on Enum's, please fix it");
     };
 
-    // let mut list = vec![];
-
     let first_variant = &variants[0].ident;
 
     let mappings = variants.iter().enumerate().map(|(idx, variant)| {
@@ -69,7 +67,55 @@ fn impl_random_variant(inp: &DeriveInput) -> TokenStream {
               _ => #name::#first_variant
           }
         }
-    }
+      }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro_derive(ValueAssigner)]
+pub fn enum_value_assigner(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+
+    impl_enum_value_assigner(&input)
+}
+
+fn impl_enum_value_assigner(inp: &DeriveInput) -> TokenStream {
+    let name = &inp.ident;
+
+    let variants = if let syn::Data::Enum(data) = &inp.data {
+        &data.variants
+    } else {
+        panic!("RandomVariant procedural macro can only be used on Enum's, please fix it");
+    };
+
+    let mappings = variants.iter().enumerate().map(|(idx, variant)| {
+        let variant_ident = &variant.ident; // Get the variant identifier
+        quote! { #name::#variant_ident => #idx }
+    });
+
+    let rev_mappings = variants.iter().enumerate().map(|(idx, variant)| {
+        let variant_ident = &variant.ident; // Get the variant identifier
+        quote! { #idx => #name::#variant_ident }
+    });
+
+    let first_variant = &variants[0].ident;
+
+    let expanded = quote! {
+      impl #name {
+        pub fn get_value(&self) -> usize {
+          match &self {
+              #(#mappings),*,
+          }
+        }
+
+        pub fn get_type(v: usize) -> Self {
+          match v {
+            #(#rev_mappings),*,
+            _ => #name::#first_variant
+          }
+        }
+      }
     };
 
     TokenStream::from(expanded)
