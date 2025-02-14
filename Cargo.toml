@@ -1,0 +1,13 @@
+[package]
+name = "proc_macros"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+enum-derived = "0.8.2"
+quote = "1.0.38"
+rand = "0.9.0"
+syn = { version = "2.0.98", features = ["full"] }
+
+[lib]
+proc-macro = true
