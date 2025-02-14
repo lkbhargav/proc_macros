@@ -1,4 +1,6 @@
 use proc_macros::{time_it, FieldCounter, Random, ValueAssigner};
+use rand::distr::{Distribution, StandardUniform};
+use rand::Rng;
 
 #[derive(Debug, FieldCounter, Random, ValueAssigner)]
 enum MyEnum {
