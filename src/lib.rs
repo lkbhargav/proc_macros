@@ -54,7 +54,7 @@ fn impl_random_variant(inp: &DeriveInput) -> TokenStream {
 
     let expanded = quote! {
       impl #name {
-        fn random() -> #name {
+        pub fn random() -> #name {
           let mut rng = rand::thread_rng();
           [#(#mappings),*,].choose(&mut rng).unwrap().clone()
         }
